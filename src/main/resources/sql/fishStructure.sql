@@ -19,17 +19,27 @@
 -- Table structure for table `fish`
 --
 
-DROP TABLE IF EXISTS `fish`;
+DROP TABLE IF EXISTS `fish_image_file_names` cascade;
+DROP TABLE IF EXISTS `fish` cascade;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+
+CREATE TABLE `fish_image_file_names` (
+  `image_file_names` varchar(255) NOT NULL,
+  PRIMARY KEY (`image_file_names`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `fish` (
   `id` int NOT NULL AUTO_INCREMENT,
   `catch_date` datetime(6) DEFAULT NULL,
-  `image_file_name` varchar(255) DEFAULT NULL,
+  `image_file_names` varchar(255),
   `name` varchar(255) DEFAULT NULL,
   `price` double NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `image_file_names` (`image_file_names`),
+  CONSTRAINT `image_fk_1` foreign key (`image_file_names`) references `fish_image_file_names` (`image_file_names`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

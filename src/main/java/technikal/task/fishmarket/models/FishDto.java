@@ -5,6 +5,8 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.List;
+
 public class FishDto {
 	
 
@@ -12,7 +14,7 @@ public class FishDto {
 	private String name;
 	@Min(0)
 	private double price;
-	private MultipartFile imageFile;
+	private List<MultipartFile> imageFile;
 	
 	public String getName() {
 		return name;
@@ -26,11 +28,12 @@ public class FishDto {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public MultipartFile getImageFile() {
+
+	public List<MultipartFile> getImageFile () {
 		return imageFile;
 	}
-	public void setImageFile(MultipartFile imageFile) {
+
+	public void setImageFile (final List<MultipartFile> imageFile) {
 		this.imageFile = imageFile;
 	}
-
 }

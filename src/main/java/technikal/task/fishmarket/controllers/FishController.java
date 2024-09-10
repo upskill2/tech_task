@@ -55,7 +55,7 @@ public class FishController {
 			
 			Fish fish = repo.findById(id).get();
 			
-			Path imagePath = Paths.get("public/images/"+fish.getImageFileName());
+			Path imagePath = Paths.get("public/images/"+fish.getImageFileNames ());
 			Files.delete(imagePath);
 			repo.delete(fish);
 			
@@ -65,47 +65,48 @@ public class FishController {
 		
 		return "redirect:/fish";
 	}
-	
+
 	@PostMapping("/create")
 	public String addFish(@Valid @ModelAttribute FishDto fishDto, BindingResult result) {
-		
+
 		if(fishDto.getImageFile().isEmpty()) {
-			result.addError(new FieldError("fishDto", "imageFile", "Потрібне фото рибки"));
+			result.addError(new FieldError("fishDto", "imageFiles", "At least one image is required"));
 		}
-		
+
 		if(result.hasErrors()) {
 			return "createFish";
 		}
-		
-		MultipartFile image = fishDto.getImageFile();
+
 		Date catchDate = new Date();
-		String  storageFileName = catchDate.getTime() + "_" + image.getOriginalFilename();
-		
-		try {
-			String uploadDir = "public/images/";
-			Path uploadPath = Paths.get(uploadDir);
-			
-			if(!Files.exists(uploadPath)) {
-				Files.createDirectories(uploadPath);
-			}
-			
-			try(InputStream inputStream = image.getInputStream()){
-				Files.copy(inputStream, Paths.get(uploadDir+storageFileName), StandardCopyOption.REPLACE_EXISTING);
-			}
-			
-		}catch(Exception ex) {
-			System.out.println("Exception: " + ex.getMessage());
-		}
-		
-		Fish fish = new Fish();
-		
+		Fish fish = new Fish ();
 		fish.setCatchDate(catchDate);
-		fish.setImageFileName(storageFileName);
 		fish.setName(fishDto.getName());
 		fish.setPrice(fishDto.getPrice());
-		
+
+		for (MultipartFile image : fishDto.getImageFile()) {
+			String storageFileName = catchDate.getTime() + "_" + image.getOriginalFilename();
+
+			try {
+				String uploadDir = "public/images/";
+				Path uploadPath = Paths.get(uploadDir);
+
+				if(!Files.exists(uploadPath)) {
+					Files.createDirectories(uploadPath);
+				}
+
+				try(InputStream inputStream = image.getInputStream()){
+					Files.copy(inputStream, Paths.get(uploadDir+storageFileName), StandardCopyOption.REPLACE_EXISTING);
+				}
+
+				fish.getImageFileNames().add(storageFileName);
+
+			}catch(Exception ex) {
+				System.out.println("Exception: " + ex.getMessage());
+			}
+		}
+
 		repo.save(fish);
-		
+
 		return "redirect:/fish";
 	}
 
